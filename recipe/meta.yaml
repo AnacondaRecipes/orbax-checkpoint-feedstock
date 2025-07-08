@@ -1,6 +1,5 @@
-{% set python_min = '3.10' %}
 {% set name = "orbax-checkpoint" %}
-{% set version = "0.6.4" %}
+{% set version = "0.11.18" %}
 
 package:
   name: {{ name|lower }}
@@ -11,17 +10,17 @@ source:
   sha256: 366b4d528a7322e1b3d9ddcaed45c8515add0d2fc69c8975c30d98638543240f
 
 build:
-  noarch: python
+  skip: true  # [py<310]
   script: {{ PYTHON }} -m pip install . -vv
   number: 1
 
 requirements:
   host:
-    - python {{ python_min }}
+    - python
     - flit-core >=3.5,<4
     - pip
   run:
-    - python >={{ python_min }}
+    - python
     - absl-py
     - etils
     - typing_extensions
@@ -42,7 +41,7 @@ test:
     - pip check
   requires:
     - pip
-    - python {{ python_min }}
+    - python
 
 about:
   summary: Orbax Checkpoint
