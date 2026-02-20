@@ -7,12 +7,12 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/orbax_checkpoint-{{ version }}.tar.gz
-  sha256: 366b4d528a7322e1b3d9ddcaed45c8515add0d2fc69c8975c30d98638543240f
+  sha256: de7c3826550fc5fed1eb362be30e4b83125cb32bb86de951652bb3c4f9337415
 
 build:
   skip: true  # [py<310]
-  script: {{ PYTHON }} -m pip install . -vv
-  number: 1
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
+  number: 0
 
 requirements:
   host:
@@ -25,29 +25,46 @@ requirements:
     - etils
     - typing_extensions
     - msgpack-python
-    - jax >=0.4.26
+    - jax >=0.5.0
     - numpy
     - pyyaml
-    - tensorstore >=0.1.60
+    - tensorstore >=0.1.71
     - nest-asyncio
     - protobuf
     - humanize
+    - simplejson >=3.16.0
     - importlib_resources
 
 test:
+  files:
+    - test_smoke_orbax_checkpoint.py
   imports:
     - orbax.checkpoint
-  commands:
-    - pip check
   requires:
     - pip
     - python
+    - pytest
+    - numpy
+    - jax
+    - importlib_resources
+  commands:
+    - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -ra -v test_smoke_orbax_checkpoint.py
 
 about:
-  summary: Orbax Checkpoint
   home: https://github.com/google/orbax
+  summary: Orbax provides common checkpointing and persistence utilities for JAX users
+  description: |
+    Orbax includes a checkpointing library oriented towards JAX users,
+    supporting a variety of different features required by different frameworks,
+    including asynchronous checkpointing, various types, and various storage formats.
+    We aim to provide a highly customizable and composable API which maximizes
+    flexibility for diverse use cases.
   license: Apache-2.0
   license_file: LICENSE
+  doc_url: https://orbax.readthedocs.io
+  dev_url: https://github.com/google/orbax
 
 extra:
   recipe-maintainers:
