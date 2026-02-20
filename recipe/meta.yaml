@@ -45,7 +45,8 @@ test:
     - python
     - pytest
     - numpy
-    - jax
+    # We don't have jax for aarch64 and python310 in the channel
+    - jax >=0.4.35
     - importlib_resources
   commands:
     - pip check
