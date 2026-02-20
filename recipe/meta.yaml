@@ -10,6 +10,8 @@ source:
   sha256: de7c3826550fc5fed1eb362be30e4b83125cb32bb86de951652bb3c4f9337415
 
 build:
+  # skip win: don't have tensorstore for win
+  # skip py310: don't have jax for py310
   skip: true  # [py<=310 or win]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   number: 0
@@ -63,6 +65,7 @@ about:
     flexibility for diverse use cases.
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
   doc_url: https://orbax.readthedocs.io
   dev_url: https://github.com/google/orbax
 
