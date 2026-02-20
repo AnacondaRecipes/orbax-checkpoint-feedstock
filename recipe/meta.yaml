@@ -10,7 +10,7 @@ source:
   sha256: de7c3826550fc5fed1eb362be30e4b83125cb32bb86de951652bb3c4f9337415
 
 build:
-  skip: true  # [py<310]
+  skip: true  # [py<=310 or win]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   number: 0
 
@@ -45,8 +45,7 @@ test:
     - python
     - pytest
     - numpy
-    # We don't have jax for aarch64 and python310 in the channel
-    - jax >=0.4.35
+    - jax
     - importlib_resources
   commands:
     - pip check
