@@ -46,9 +46,6 @@ test:
     - pip
     - python
     - pytest
-    - numpy
-    - jax
-    - importlib_resources
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
