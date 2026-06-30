@@ -14,7 +14,7 @@ build:
   # skip py310: don't have jax for py310
   skip: true  # [py<=310 or win]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
-  number: 0
+  number: 1
 
 requirements:
   host:
