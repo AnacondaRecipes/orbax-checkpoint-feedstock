@@ -1,20 +1,20 @@
 {% set name = "orbax-checkpoint" %}
-{% set version = "0.11.18" %}
+{% set version = "0.12.9" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/orbax_checkpoint-{{ version }}.tar.gz
-  sha256: de7c3826550fc5fed1eb362be30e4b83125cb32bb86de951652bb3c4f9337415
+  sha256: be2359210cd1d6582ff2b0ed2c261fcd7cce790ee23f9efe2d235a3c2abbc58f
 
 build:
   # skip win: don't have tensorstore for win
-  # skip py310: don't have jax for py310
-  skip: true  # [py<=310 or win]
+  # skip py<311: upstream requires-python >=3.11
+  skip: true  # [py<311 or win]
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
-  number: 1
+  number: 0
 
 requirements:
   host:
@@ -24,20 +24,31 @@ requirements:
   run:
     - python
     - absl-py
-    - etils
+    - etils >=1.15.0
     - typing_extensions
     - msgpack-python
-    - jax >=0.5.0
+    - jax >=0.6.0
     - numpy
+    - prometheus_client >=0.20.0
     - pyyaml
-    - tensorstore >=0.1.71
-    - nest-asyncio
+    - tensorstore >=0.1.84
+    - aiofiles
     - protobuf
     - humanize
     - simplejson >=3.16.0
-    - importlib_resources
+    - psutil
+    # upstream markers: uvloop everywhere except Windows, nest_asyncio on Windows
+    - uvloop  # [not win]
+    - nest-asyncio  # [win]
+  run_constrained:
+    # optional "tiering-service" extra: experimental service, not imported by
+    # orbax.checkpoint itself
+    - grpcio-tools >=1.80.0
+    - sqlalchemy >=1.4.0
 
 test:
+  # upstream excludes **/*_test.py from the sdist, so the upstream test suite is
+  # not shipped; recipe smoke tests cover import + CheckpointManager round trips
   files:
     - test_smoke_orbax_checkpoint.py
   imports:
@@ -49,7 +60,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    - pytest -ra -v test_smoke_orbax_checkpoint.py
+    - pytest -vv test_smoke_orbax_checkpoint.py
 
 about:
   home: https://github.com/google/orbax
